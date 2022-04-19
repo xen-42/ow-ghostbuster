@@ -27,31 +27,39 @@ namespace GhostBuster
 
         private void Start()
         {
-            _light1 = transform.Find("Prefab_IP_SleepingMummy_v2/Pointlight_IP_Mummy").GetComponent<Light>();
-            _light2 = transform.Find("Prefab_IP_SleepingMummy_v2/Mummy_IP_ArtifactAnim/ArtifactPivot/Pointlight_IP_MummyArtifact").GetComponent<Light>();
-            _flame = transform.Find("Prefab_IP_SleepingMummy_v2/Mummy_IP_ArtifactAnim/ArtifactPivot/Flame").gameObject;
-
-            _light1StartIntensity = _light1.intensity;
-            _light2StartIntensity = _light2.intensity; 
-
-            GameObject interactObject = new GameObject("InteractReceiver");
-            interactObject.transform.parent = transform;
-            interactObject.transform.position = _flame.transform.position;
-            interactObject.layer = LayerMask.NameToLayer("Interactible");
-
-            var sphere = interactObject.AddComponent<SphereCollider>();
-            sphere.radius = 0.3f;
-            interactObject.AddComponent<OWCollider>();
-            
-            _interactReceiver = interactObject.AddComponent<InteractReceiver>();
-            _interactReceiver.SetPromptText(UITextType.RoastingExtinguishPrompt);
-            _interactReceiver.SetInteractionEnabled(true);
-
-            _interactReceiver.OnPressInteract += Extinguish;
-
-            if(_ghost == null)
+            try
             {
-                Extinguish();
+                _light1 = transform.Find("Prefab_IP_SleepingMummy_v2/Pointlight_IP_Mummy").GetComponent<Light>();
+                _light2 = transform.Find("Prefab_IP_SleepingMummy_v2/Mummy_IP_ArtifactAnim/ArtifactPivot/Pointlight_IP_MummyArtifact").GetComponent<Light>();
+                _flame = transform.Find("Prefab_IP_SleepingMummy_v2/Mummy_IP_ArtifactAnim/ArtifactPivot/Flame").gameObject;
+
+                _light1StartIntensity = _light1.intensity;
+                _light2StartIntensity = _light2.intensity;
+
+                GameObject interactObject = new GameObject("InteractReceiver");
+                interactObject.transform.parent = transform;
+                interactObject.transform.position = _flame.transform.position;
+                interactObject.layer = LayerMask.NameToLayer("Interactible");
+
+                var sphere = interactObject.AddComponent<SphereCollider>();
+                sphere.radius = 0.3f;
+                interactObject.AddComponent<OWCollider>();
+
+                _interactReceiver = interactObject.AddComponent<InteractReceiver>();
+                _interactReceiver.SetPromptText(UITextType.RoastingExtinguishPrompt);
+                _interactReceiver.SetInteractionEnabled(true);
+
+                _interactReceiver.OnPressInteract += Extinguish;
+
+                if (_ghost == null)
+                {
+                    FinishExtinguish();
+                }
+            }
+            catch(Exception ex)
+            {
+                Util.LogError($"Problem with {name}: {ex.Message}, {ex.StackTrace}");
+                FinishExtinguish();
             }
         }
 
@@ -67,15 +75,15 @@ namespace GhostBuster
 
         public void Extinguish()
         {
-            _extinguishing = true;
-
             // If it has no connected ghost do it instantly
             if (_ghost == null) 
             {
-                _timer = EXTINGUISH_TIME;
+                FinishExtinguish();
             }
             else
             {
+                _extinguishing = true;
+
                 Locator.GetPlayerAudioController().PlayMarshmallowBlowOut();
 
                 _ghost.Die();
@@ -85,6 +93,17 @@ namespace GhostBuster
                 _interactReceiver.ResetInteraction();
                 _interactReceiver.DisableInteraction();
             }
+        }
+
+        private void FinishExtinguish()
+        {
+            _extinguishing = false;
+
+            if(_flame) _flame.SetActive(false);
+            if(_light1) _light1.gameObject.SetActive(false);
+            if(_light2) _light2.gameObject.SetActive(false);
+
+            base.enabled = false;
         }
 
         private void Update()
@@ -100,13 +119,7 @@ namespace GhostBuster
 
                 if(_timer > EXTINGUISH_TIME)
                 {
-                    _extinguishing = false;
-
-                    _flame.SetActive(false);
-                    _light1.gameObject.SetActive(false);
-                    _light2.gameObject.SetActive(false);
-
-                    base.enabled = false;
+                    FinishExtinguish();
                 }
             }
         }
