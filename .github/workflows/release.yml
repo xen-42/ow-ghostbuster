@@ -12,7 +12,7 @@ on:
 
 env:
     PROJ_USERNAME: xen
-    PROJ_NAME: Ghostbuster
+    PROJ_NAME: GhostBuster
 
 jobs:
     pre_job:
