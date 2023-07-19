@@ -1,8 +1,9 @@
 {
-  "filename": "GhostBuster.dll",
-  "author": "xen",
-  "name": "Ghostbuster",
-  "uniqueName": "xen.GhostBuster",
-  "version": "0.1.1",
-  "owmlVersion": "2.0.0"
+	"$schema": "https://raw.githubusercontent.com/amazingalek/owml/master/schemas/manifest_schema.json",
+	"filename": "GhostBuster.dll",
+	"author": "xen",
+	"name": "Ghostbuster",
+	"uniqueName": "xen.GhostBuster",
+	"version": "1.0.0",
+	"owmlVersion": "2.0.0"
 }
