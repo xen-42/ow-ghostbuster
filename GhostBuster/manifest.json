@@ -4,6 +4,7 @@
 	"author": "xen",
 	"name": "Ghostbuster",
 	"uniqueName": "xen.GhostBuster",
-	"version": "1.0.0",
-	"owmlVersion": "2.0.0"
+	"version": "1.0.1",
+	"owmlVersion": "2.0.0",
+  	"donateLink": "https://www.patreon.com/xen42"
 }
